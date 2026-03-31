@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minesweeper</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f1a; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #e94560, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .board { display: inline-grid; gap: 2px; background: #1a1a2e; padding: 8px; border-radius: 12px; }
+    .cell { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #2a3a5c; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 700; user-select: none; transition: background 0.1s; }
+    .cell:hover { background: #3a4a6c; }
+    .cell.revealed { background: #16213e; cursor: default; }
+    .cell.mine { background: #e94560; }
+    .cell.flagged::after { content: '&#9873;'; color: #e94560; }
+    .info { margin: 12px 0; display: flex; gap: 20px; align-items: center; }
+    .back { position: absolute; top: 16px; left: 16px; padding: 10px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; text-decoration: none; font-size: 0.95rem; }
+    .back:hover { background: #ff6b81; }
+    button { padding: 8px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; cursor: pointer; }
+    button:hover { background: #ff6b81; }
+    #msg { color: #ff6b81; margin-top: 8px; font-size: 1.1rem; }
+    .n1{color:#3498db}.n2{color:#2ecc71}.n3{color:#e94560}.n4{color:#9b59b6}.n5{color:#e67e22}.n6{color:#1abc9c}.n7{color:#333}.n8{color:#95a5a6}
+  </style>
+</head>
+<body>
+  <a href="../../games/index.html" class="back">&#8592; Back</a>
+  <h1>Minesweeper</h1>
+  <div class="info">
+    <span>Mines: <strong id="mines">10</strong></span>
+    <button onclick="init()">New Game</button>
+    <select id="diff" onchange="init()">
+      <option value="easy">Easy (9x9, 10)</option>
+      <option value="medium">Medium (16x16, 40)</option>
+      <option value="hard">Hard (16x30, 99)</option>
+    </select>
+  </div>
+  <div class="board" id="board" oncontextmenu="return false"></div>
+  <div id="msg"></div>
+  <script>
+    let rows, cols, mineCount, board, revealed, flagged, gameOver;
+    const colors = ['','#3498db','#2ecc71','#e94560','#9b59b6','#e67e22','#1abc9c','#333','#95a5a6'];
+
+    function init() {
+      const diff = document.getElementById('diff').value;
+      if (diff === 'easy') { rows = 9; cols = 9; mineCount = 10; }
+      else if (diff === 'medium') { rows = 16; cols = 16; mineCount = 40; }
+      else { rows = 16; cols = 30; mineCount = 99; }
+      board = Array.from({length:rows}, () => Array(cols).fill(0));
+      revealed = Array.from({length:rows}, () => Array(cols).fill(false));
+      flagged = Array.from({length:rows}, () => Array(cols).fill(false));
+      gameOver = false;
+      document.getElementById('msg').textContent = '';
+      document.getElementById('mines').textContent = mineCount;
+
+      // Place mines
+      let placed = 0;
+      while (placed < mineCount) {
+        const r = Math.floor(Math.random() * rows), c = Math.floor(Math.random() * cols);
+        if (board[r][c] !== -1) { board[r][c] = -1; placed++; }
+      }
+      // Calculate numbers
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        if (board[r][c] === -1) continue;
+        let count = 0;
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+          const nr = r+dr, nc = c+dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc] === -1) count++;
+        }
+        board[r][c] = count;
+      }
+      render();
+    }
+
+    function reveal(r, c) {
+      if (r < 0 || r >= rows || c < 0 || c >= cols || revealed[r][c] || flagged[r][c]) return;
+      revealed[r][c] = true;
+      if (board[r][c] === 0) {
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) reveal(r+dr, c+dc);
+      }
+    }
+
+    function click(r, c) {
+      if (gameOver || flagged[r][c]) return;
+      if (board[r][c] === -1) {
+        gameOver = true;
+        // Reveal all mines
+        for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) if (board[i][j] === -1) revealed[i][j] = true;
+        document.getElementById('msg').textContent = 'Game Over!';
+      } else {
+        reveal(r, c);
+        checkWin();
+      }
+      render();
+    }
+
+    function flag(r, c) {
+      if (gameOver || revealed[r][c]) return;
+      flagged[r][c] = !flagged[r][c];
+      const remaining = mineCount - flagged.flat().filter(Boolean).length;
+      document.getElementById('mines').textContent = remaining;
+      render();
+    }
+
+    function checkWin() {
+      let unrevealed = 0;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) if (!revealed[r][c]) unrevealed++;
+      if (unrevealed === mineCount) { gameOver = true; document.getElementById('msg').textContent = 'You Win!'; }
+    }
+
+    function render() {
+      const el = document.getElementById('board');
+      el.style.gridTemplateColumns = `repeat(${cols}, 32px)`;
+      el.innerHTML = '';
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        if (revealed[r][c]) {
+          cell.classList.add('revealed');
+          if (board[r][c] === -1) { cell.classList.add('mine'); cell.textContent = '\u{1F4A3}'; }
+          else if (board[r][c] > 0) { cell.textContent = board[r][c]; cell.style.color = colors[board[r][c]]; }
+        } else if (flagged[r][c]) {
+          cell.textContent = '\u{1F6A9}';
+        }
+        cell.addEventListener('click', () => click(r, c));
+        cell.addEventListener('contextmenu', (e) => { e.preventDefault(); flag(r, c); });
+        el.appendChild(cell);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

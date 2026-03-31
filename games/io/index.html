@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>.io Games</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .game-container { width: 100%; height: calc(100vh - 80px); position: relative; }
+    .game-container iframe { width: 100%; height: 100%; border: none; border-radius: var(--radius); }
+    .fullscreen-btn { position: absolute; top: 10px; right: 10px; padding: 8px 16px; background: var(--accent); border: none; border-radius: 8px; color: #fff; cursor: pointer; z-index: 10; }
+    .fullscreen-btn:hover { background: var(--accent-hover); }
+    .note { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; color: var(--text-secondary); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+    <div class="overlay"></div>
+
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>ShreyasIsLocked</h1>
+        <div class="subtitle">Your gateway to freedom</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../../index.html"><span class="nav-icon">&#127968;</span> Home</a></li>
+        <li><a href="../../proxy/index.html"><span class="nav-icon">&#127760;</span> Proxy</a></li>
+        <li><a href="../index.html" class="active"><span class="nav-icon">&#127918;</span> Games</a></li>
+        <li><a href="../emulator/index.html"><span class="nav-icon">&#128190;</span> Emulator</a></li>
+        <li><a href="../../settings.html"><span class="nav-icon">&#9881;</span> Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        Press <kbd>`</kbd> to panic
+      </div>
+    </nav>
+
+    <main class="main">
+      <a href="../index.html" class="back-btn">&#8592; Back to Games</a>
+
+      <div id="game-list">
+        <div class="page-header">
+          <h2>.io Games</h2>
+          <p>Play popular .io games. Some may require the proxy if blocked on your network.</p>
+        </div>
+        <div class="note">
+          If a game doesn't load, try opening it through the <a href="../../proxy/index.html">Proxy</a> instead.
+        </div>
+        <div class="card-grid" id="cards"></div>
+      </div>
+
+      <div id="game-view" style="display:none;">
+        <a href="#" class="back-btn" id="back-to-list">&#8592; Back to .io Games</a>
+        <div class="game-container">
+          <button class="fullscreen-btn" onclick="document.querySelector('#game-view iframe').requestFullscreen()">Fullscreen</button>
+          <iframe id="game-frame" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" allowfullscreen></iframe>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    const games = [
+      { id: 'slither', name: 'Slither.io', icon: '\u{1F40D}', url: 'http://slither.io', desc: 'Multiplayer snake game' },
+      { id: 'agar', name: 'Agar.io', icon: '\u{26AB}', url: 'http://agar.io', desc: 'Eat cells, grow bigger' },
+      { id: 'krunker', name: 'Krunker.io', icon: '\u{1F52B}', url: 'https://krunker.io', desc: 'Fast-paced FPS shooter' },
+      { id: 'diep', name: 'Diep.io', icon: '\u{1F6E1}', url: 'http://diep.io', desc: 'Tank shooter arena' },
+      { id: '1v1lol', name: '1v1.LOL', icon: '\u{2694}', url: 'https://1v1.lol', desc: 'Build and shoot battles' },
+      { id: 'shellshock', name: 'Shell Shockers', icon: '\u{1F95A}', url: 'https://shellshock.io', desc: 'Egg-based FPS' },
+      { id: 'zombsroyale', name: 'ZombsRoyale.io', icon: '\u{1F480}', url: 'https://zombsroyale.io', desc: '2D battle royale' },
+      { id: 'surviv', name: 'Surviv.io', icon: '\u{1F3AF}', url: 'https://surviv.io', desc: '2D battle royale' },
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+    const gameId = params.get('game');
+
+    function showList() {
+      document.getElementById('game-list').style.display = '';
+      document.getElementById('game-view').style.display = 'none';
+      document.getElementById('game-frame').src = '';
+      history.pushState(null, '', 'index.html');
+    }
+
+    function showGame(g) {
+      document.getElementById('game-list').style.display = 'none';
+      document.getElementById('game-view').style.display = '';
+      document.getElementById('game-frame').src = g.url;
+      history.pushState(null, '', `?game=${g.id}`);
+    }
+
+    // Render cards
+    const cardsEl = document.getElementById('cards');
+    games.forEach(g => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<span class="card-icon">${g.icon}</span><div class="card-title">${g.name}</div><div class="card-desc">${g.desc}</div>`;
+      card.addEventListener('click', () => showGame(g));
+      cardsEl.appendChild(card);
+    });
+
+    document.getElementById('back-to-list').addEventListener('click', (e) => { e.preventDefault(); showList(); });
+
+    // Auto-load if game param present
+    if (gameId) {
+      const g = games.find(x => x.id === gameId);
+      if (g) showGame(g);
+    }
+  </script>
+</body>
+</html>

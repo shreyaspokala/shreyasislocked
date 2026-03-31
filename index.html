@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+    <div class="overlay"></div>
+
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>ShreyasIsLocked</h1>
+        <div class="subtitle">Your gateway to freedom</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active"><span class="nav-icon">&#127968;</span> Home</a></li>
+        <li><a href="proxy/index.html"><span class="nav-icon">&#127760;</span> Proxy</a></li>
+        <li><a href="games/index.html"><span class="nav-icon">&#127918;</span> Games</a></li>
+        <li><a href="games/emulator/index.html"><span class="nav-icon">&#128190;</span> Emulator</a></li>
+        <li><a href="settings.html"><span class="nav-icon">&#9881;</span> Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        Press <kbd>`</kbd> to panic
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="page-header">
+        <h2>Welcome</h2>
+        <p>Access the web freely. Play games. Stay under the radar.</p>
+      </div>
+
+      <div class="card-grid">
+        <a href="proxy/index.html" class="card">
+          <span class="card-icon">&#127760;</span>
+          <div class="card-title">Web Proxy</div>
+          <div class="card-desc">Browse any site unblocked. Access TikTok, YouTube, Discord & more.</div>
+        </a>
+        <a href="games/index.html" class="card">
+          <span class="card-icon">&#127918;</span>
+          <div class="card-title">Games</div>
+          <div class="card-desc">HTML5 games, retro emulation, and popular .io games.</div>
+        </a>
+        <a href="games/emulator/index.html" class="card">
+          <span class="card-icon">&#128190;</span>
+          <div class="card-title">Retro Emulator</div>
+          <div class="card-desc">Play NES, SNES, and GBA games right in your browser.</div>
+        </a>
+        <a href="settings.html" class="card">
+          <span class="card-icon">&#9881;</span>
+          <div class="card-title">Settings</div>
+          <div class="card-desc">Tab cloaking, panic button, proxy backend config.</div>
+        </a>
+      </div>
+
+      <div style="margin-top: 40px; text-align: center;">
+        <button class="btn btn-outline" onclick="openInBlank()">Open in about:blank</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

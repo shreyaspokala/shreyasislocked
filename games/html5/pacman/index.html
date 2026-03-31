@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pac-Man</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f1a; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #e94560, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    canvas { background: #000; border-radius: 12px; }
+    .info { margin-top: 12px; }
+    .back { position: absolute; top: 16px; left: 16px; padding: 10px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; text-decoration: none; font-size: 0.95rem; }
+    .back:hover { background: #ff6b81; }
+    #msg { color: #ff6b81; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <a href="../../games/index.html" class="back">&#8592; Back</a>
+  <h1>Pac-Man</h1>
+  <canvas id="c" width="380" height="420"></canvas>
+  <div class="info">Score: <strong id="score">0</strong></div>
+  <div id="msg"></div>
+  <script>
+    const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+    const SZ = 20;
+    // 1=wall, 0=dot, 2=empty, 3=power pellet
+    const MAP = [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+      [1,3,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,3,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1],
+      [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
+      [1,1,1,1,0,1,1,1,2,1,2,1,1,1,0,1,1,1,1],
+      [1,1,1,1,0,1,2,2,2,2,2,2,2,1,0,1,1,1,1],
+      [1,1,1,1,0,1,2,1,1,2,1,1,2,1,0,1,1,1,1],
+      [2,2,2,2,0,2,2,1,2,2,2,1,2,2,0,2,2,2,2],
+      [1,1,1,1,0,1,2,1,1,1,1,1,2,1,0,1,1,1,1],
+      [1,1,1,1,0,1,2,2,2,2,2,2,2,1,0,1,1,1,1],
+      [1,1,1,1,0,1,2,1,1,1,1,1,2,1,0,1,1,1,1],
+      [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
+      [1,3,0,1,0,0,0,0,0,2,0,0,0,0,0,1,0,3,1],
+      [1,1,0,1,0,1,0,1,1,1,1,1,0,1,0,1,0,1,1],
+      [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
+      [1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    ];
+    const ROWS = MAP.length, COLS = MAP[0].length;
+    let map, pac, ghosts, score, lives, gameOver, dir, nextDir, mouthOpen, powerTimer;
+
+    function init() {
+      map = MAP.map(r => [...r]);
+      pac = {x: 9, y: 15, dir: {x:0,y:0}};
+      ghosts = [
+        {x:8, y:9, color:'#ff0000', dx:1, dy:0},
+        {x:9, y:9, color:'#ffb8ff', dx:-1, dy:0},
+        {x:10, y:9, color:'#00ffff', dx:0, dy:-1},
+        {x:9, y:8, color:'#ffb852', dx:0, dy:1},
+      ];
+      score = 0; lives = 3; gameOver = false; dir = {x:0,y:0}; nextDir = {x:0,y:0}; mouthOpen = 0; powerTimer = 0;
+      document.getElementById('msg').textContent = '';
+    }
+
+    function canMove(x, y) {
+      if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return true; // wrap
+      return map[y][x] !== 1;
+    }
+
+    function wrap(x, y) {
+      if (x < 0) x = COLS - 1; if (x >= COLS) x = 0;
+      if (y < 0) y = ROWS - 1; if (y >= ROWS) y = 0;
+      return {x, y};
+    }
+
+    function update() {
+      if (gameOver) return;
+      mouthOpen = (mouthOpen + 1) % 15;
+      if (powerTimer > 0) powerTimer--;
+
+      // Try next direction first
+      const nx = pac.x + nextDir.x, ny = pac.y + nextDir.y;
+      if (canMove(nx, ny)) { dir = {...nextDir}; }
+      const mx = pac.x + dir.x, my = pac.y + dir.y;
+      if (canMove(mx, my)) {
+        const w = wrap(mx, my);
+        pac.x = w.x; pac.y = w.y;
+      }
+
+      // Eat dots
+      if (map[pac.y] && (map[pac.y][pac.x] === 0 || map[pac.y][pac.x] === 3)) {
+        if (map[pac.y][pac.x] === 3) powerTimer = 60;
+        map[pac.y][pac.x] = 2;
+        score += 10;
+        document.getElementById('score').textContent = score;
+      }
+
+      // Move ghosts
+      ghosts.forEach(g => {
+        const dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+        const valid = dirs.filter(d => canMove(g.x+d.x, g.y+d.y) && !(d.x === -g.dx && d.y === -g.dy));
+        if (valid.length > 0) {
+          // Prefer direction toward pacman sometimes
+          if (Math.random() < 0.6 && powerTimer === 0) {
+            valid.sort((a,b) => {
+              const da = Math.abs(pac.x-(g.x+a.x)) + Math.abs(pac.y-(g.y+a.y));
+              const db = Math.abs(pac.x-(g.x+b.x)) + Math.abs(pac.y-(g.y+b.y));
+              return da - db;
+            });
+          }
+          const d = valid[0];
+          g.dx = d.x; g.dy = d.y;
+        }
+        const w = wrap(g.x + g.dx, g.y + g.dy);
+        g.x = w.x; g.y = w.y;
+
+        // Collision
+        if (g.x === pac.x && g.y === pac.y) {
+          if (powerTimer > 0) { g.x = 9; g.y = 9; score += 200; }
+          else { lives--; if (lives <= 0) { gameOver = true; document.getElementById('msg').textContent = 'Game Over!'; } else { pac.x = 9; pac.y = 15; dir = {x:0,y:0}; } }
+        }
+      });
+
+      // Check win
+      let dotsLeft = false;
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (map[r][c] === 0 || map[r][c] === 3) dotsLeft = true;
+      if (!dotsLeft) { gameOver = true; document.getElementById('msg').textContent = 'You Win!'; }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Map
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const x = c * SZ, y = r * SZ;
+        if (map[r][c] === 1) { ctx.fillStyle = '#1a1a6e'; ctx.fillRect(x, y, SZ, SZ); }
+        else if (map[r][c] === 0) { ctx.fillStyle = '#ffb8ff'; ctx.beginPath(); ctx.arc(x+SZ/2, y+SZ/2, 2, 0, Math.PI*2); ctx.fill(); }
+        else if (map[r][c] === 3) { ctx.fillStyle = '#ffb8ff'; ctx.beginPath(); ctx.arc(x+SZ/2, y+SZ/2, 5, 0, Math.PI*2); ctx.fill(); }
+      }
+      // Pac-Man
+      const px = pac.x * SZ + SZ/2, py = pac.y * SZ + SZ/2;
+      const angle = Math.atan2(dir.y, dir.x);
+      const mouth = mouthOpen < 7 ? 0.3 : 0.01;
+      ctx.fillStyle = '#edc22e';
+      ctx.beginPath();
+      ctx.arc(px, py, SZ/2 - 1, angle + mouth, angle + Math.PI*2 - mouth);
+      ctx.lineTo(px, py);
+      ctx.fill();
+      // Ghosts
+      ghosts.forEach(g => {
+        ctx.fillStyle = powerTimer > 0 ? '#0000ff' : g.color;
+        const gx = g.x * SZ, gy = g.y * SZ;
+        ctx.beginPath();
+        ctx.arc(gx + SZ/2, gy + SZ/2 - 2, SZ/2 - 1, Math.PI, 0);
+        ctx.lineTo(gx + SZ - 1, gy + SZ);
+        ctx.lineTo(gx + SZ*0.75, gy + SZ - 4);
+        ctx.lineTo(gx + SZ/2, gy + SZ);
+        ctx.lineTo(gx + SZ*0.25, gy + SZ - 4);
+        ctx.lineTo(gx + 1, gy + SZ);
+        ctx.fill();
+        // Eyes
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(gx + 7, gy + 8, 3, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(gx + 14, gy + 8, 3, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(gx + 7 + dir.x, gy + 8 + dir.y, 1.5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(gx + 14 + dir.x, gy + 8 + dir.y, 1.5, 0, Math.PI*2); ctx.fill();
+      });
+      // Lives
+      ctx.fillStyle = '#edc22e';
+      for (let i = 0; i < lives; i++) { ctx.beginPath(); ctx.arc(20 + i*25, ROWS*SZ + 10, 7, 0.3, Math.PI*2 - 0.3); ctx.lineTo(20 + i*25, ROWS*SZ + 10); ctx.fill(); }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (gameOver) { init(); return; }
+      const map = { ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0}, ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1} };
+      if (map[e.key]) { nextDir = map[e.key]; e.preventDefault(); }
+    });
+
+    function loop() { update(); draw(); setTimeout(loop, 150); }
+    init(); loop();
+  </script>
+</body>
+</html>

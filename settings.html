@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+    <div class="overlay"></div>
+
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>ShreyasIsLocked</h1>
+        <div class="subtitle">Your gateway to freedom</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html"><span class="nav-icon">&#127968;</span> Home</a></li>
+        <li><a href="proxy/index.html"><span class="nav-icon">&#127760;</span> Proxy</a></li>
+        <li><a href="games/index.html"><span class="nav-icon">&#127918;</span> Games</a></li>
+        <li><a href="games/emulator/index.html"><span class="nav-icon">&#128190;</span> Emulator</a></li>
+        <li><a href="settings.html" class="active"><span class="nav-icon">&#9881;</span> Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        Press <kbd>`</kbd> to panic
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="page-header">
+        <h2>Settings</h2>
+        <p>Configure stealth features and proxy backend.</p>
+      </div>
+
+      <div class="settings-group">
+        <h3>Stealth</h3>
+        <div class="setting-row">
+          <div class="setting-label">
+            Tab Cloak
+            <small>Disguise the tab title and icon</small>
+          </div>
+          <div class="setting-input">
+            <select id="cloak-select">
+              <option value="">None (disabled)</option>
+              <option value="google-docs">Google Docs</option>
+              <option value="google-drive">Google Drive</option>
+              <option value="clever">Clever Portal</option>
+              <option value="canvas">Canvas LMS</option>
+              <option value="gmail">Gmail</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">
+            Panic URL
+            <small>Where to go when you press the panic key (<kbd>`</kbd>)</small>
+          </div>
+          <div class="setting-input">
+            <input type="url" id="panic-url" placeholder="https://www.google.com">
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Proxy</h3>
+        <div class="setting-row">
+          <div class="setting-label">
+            Backend URL
+            <small>The URL of your proxy backend server</small>
+          </div>
+          <div class="setting-input">
+            <input type="url" id="backend-url" placeholder="https://your-backend.koyeb.app">
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:24px;">
+        <button class="btn" onclick="saveSettings()">Save Settings</button>
+        <button class="btn btn-outline" onclick="openInBlank()">Open in about:blank</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tetris</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f1a; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #e94560, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    canvas { background: #1a1a2e; border-radius: 12px; }
+    .info { margin-top: 12px; display: flex; gap: 20px; }
+    .back { position: absolute; top: 16px; left: 16px; padding: 10px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; text-decoration: none; font-size: 0.95rem; }
+    .back:hover { background: #ff6b81; }
+    button { padding: 8px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #ff6b81; }
+    #msg { color: #ff6b81; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <a href="../../games/index.html" class="back">&#8592; Back</a>
+  <h1>Tetris</h1>
+  <canvas id="c" width="250" height="500"></canvas>
+  <div class="info"><span>Score: <strong id="score">0</strong></span><span>Lines: <strong id="lines">0</strong></span></div>
+  <div id="msg"></div>
+  <button onclick="init()">New Game</button>
+  <script>
+    const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+    const COLS = 10, ROWS = 20, SZ = 25;
+    const SHAPES = [
+      [[1,1,1,1]],
+      [[1,1],[1,1]],
+      [[0,1,0],[1,1,1]],
+      [[1,0,0],[1,1,1]],
+      [[0,0,1],[1,1,1]],
+      [[1,1,0],[0,1,1]],
+      [[0,1,1],[1,1,0]]
+    ];
+    const COLORS = ['#00f0f0','#f0f000','#a020f0','#f09000','#0000f0','#00f000','#f00000'];
+    let board, piece, px, py, pi, score, lines, gameOver, dropTimer, dropInterval;
+
+    function init() {
+      board = Array.from({length:ROWS}, () => Array(COLS).fill(0));
+      score = 0; lines = 0; gameOver = false; dropInterval = 500;
+      document.getElementById('msg').textContent = '';
+      update();
+      newPiece();
+      if (dropTimer) clearInterval(dropTimer);
+      dropTimer = setInterval(drop, dropInterval);
+    }
+
+    function newPiece() {
+      pi = Math.floor(Math.random() * SHAPES.length);
+      piece = SHAPES[pi].map(r => [...r]);
+      px = Math.floor((COLS - piece[0].length) / 2);
+      py = 0;
+      if (collides(px, py, piece)) { gameOver = true; document.getElementById('msg').textContent = 'Game Over!'; clearInterval(dropTimer); }
+    }
+
+    function collides(x, y, p) {
+      for (let r = 0; r < p.length; r++) for (let c = 0; c < p[r].length; c++) {
+        if (p[r][c] && (y+r >= ROWS || x+c < 0 || x+c >= COLS || board[y+r][x+c])) return true;
+      }
+      return false;
+    }
+
+    function merge() {
+      for (let r = 0; r < piece.length; r++) for (let c = 0; c < piece[r].length; c++) {
+        if (piece[r][c]) board[py+r][px+c] = pi + 1;
+      }
+    }
+
+    function clearLines() {
+      let cleared = 0;
+      for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r].every(v => v)) { board.splice(r, 1); board.unshift(Array(COLS).fill(0)); cleared++; r++; }
+      }
+      if (cleared) { lines += cleared; score += [0, 100, 300, 500, 800][cleared]; update(); }
+    }
+
+    function drop() {
+      if (gameOver) return;
+      if (!collides(px, py + 1, piece)) { py++; }
+      else { merge(); clearLines(); newPiece(); }
+      draw();
+    }
+
+    function rotate() {
+      const rotated = piece[0].map((_, i) => piece.map(r => r[i]).reverse());
+      if (!collides(px, py, rotated)) piece = rotated;
+    }
+
+    function update() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('lines').textContent = lines;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Board
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        ctx.fillStyle = board[r][c] ? COLORS[board[r][c]-1] : '#16213e';
+        ctx.fillRect(c*SZ, r*SZ, SZ-1, SZ-1);
+      }
+      // Current piece
+      if (!gameOver) {
+        ctx.fillStyle = COLORS[pi];
+        for (let r = 0; r < piece.length; r++) for (let c = 0; c < piece[r].length; c++) {
+          if (piece[r][c]) ctx.fillRect((px+c)*SZ, (py+r)*SZ, SZ-1, SZ-1);
+        }
+      }
+      update();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (gameOver) return;
+      if (e.key === 'ArrowLeft' && !collides(px-1, py, piece)) px--;
+      else if (e.key === 'ArrowRight' && !collides(px+1, py, piece)) px++;
+      else if (e.key === 'ArrowDown') drop();
+      else if (e.key === 'ArrowUp') rotate();
+      else if (e.key === ' ') { while (!collides(px, py+1, piece)) py++; drop(); }
+      e.preventDefault();
+      draw();
+    });
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Proxy</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .proxy-hero {
+      text-align: center;
+      padding: 40px 0 20px;
+    }
+    .proxy-hero .icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .proxy-hero h2 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .proxy-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-bottom: 24px;
+    }
+    .proxy-status.connected { background: rgba(46,204,113,0.2); color: #2ecc71; }
+    .proxy-status.disconnected { background: rgba(233,69,96,0.2); color: #e94560; }
+    .quick-section {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .quick-section h3 {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .proxy-frame-container {
+      display: none;
+      width: 100%;
+      height: calc(100vh - 60px);
+      position: relative;
+    }
+    .proxy-frame-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: var(--radius);
+      background: #fff;
+    }
+    .proxy-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+    }
+    .proxy-toolbar input {
+      flex: 1;
+      padding: 10px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .proxy-toolbar button {
+      padding: 10px 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .setup-notice {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 32px;
+      text-align: center;
+    }
+    .setup-notice h3 { margin-bottom: 12px; }
+    .setup-notice p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+    .setup-notice code { background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+    <div class="overlay"></div>
+
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>ShreyasIsLocked</h1>
+        <div class="subtitle">Your gateway to freedom</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../index.html"><span class="nav-icon">&#127968;</span> Home</a></li>
+        <li><a href="index.html" class="active"><span class="nav-icon">&#127760;</span> Proxy</a></li>
+        <li><a href="../games/index.html"><span class="nav-icon">&#127918;</span> Games</a></li>
+        <li><a href="../games/emulator/index.html"><span class="nav-icon">&#128190;</span> Emulator</a></li>
+        <li><a href="../settings.html"><span class="nav-icon">&#9881;</span> Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        Press <kbd>`</kbd> to panic
+      </div>
+    </nav>
+
+    <main class="main">
+      <!-- Search View -->
+      <div id="proxy-search">
+        <div class="proxy-hero">
+          <span class="icon">&#127760;</span>
+          <h2>Web Proxy</h2>
+          <p style="color:var(--text-secondary);margin-bottom:16px;">Browse any website freely and privately.</p>
+          <span class="proxy-status" id="proxy-status">Checking...</span>
+        </div>
+
+        <div class="proxy-container">
+          <div class="search-box">
+            <input type="text" id="proxy-input" placeholder="Enter a URL or search term..." autocomplete="off" autofocus>
+            <button onclick="navigate()">Go</button>
+          </div>
+
+          <div class="quick-section">
+            <h3>Quick Access</h3>
+            <div class="quick-links">
+              <div class="quick-link" onclick="go('https://www.tiktok.com')">&#127926; TikTok</div>
+              <div class="quick-link" onclick="go('https://www.youtube.com')">&#9654; YouTube</div>
+              <div class="quick-link" onclick="go('https://discord.com/app')">&#128172; Discord</div>
+              <div class="quick-link" onclick="go('https://www.reddit.com')">&#128196; Reddit</div>
+              <div class="quick-link" onclick="go('https://www.twitch.tv')">&#127918; Twitch</div>
+              <div class="quick-link" onclick="go('https://twitter.com')">&#128038; Twitter/X</div>
+              <div class="quick-link" onclick="go('https://www.instagram.com')">&#128247; Instagram</div>
+              <div class="quick-link" onclick="go('https://www.netflix.com')">&#127916; Netflix</div>
+              <div class="quick-link" onclick="go('https://open.spotify.com')">&#127925; Spotify</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-notice" id="setup-notice" style="display:none;">
+          <h3>Backend Setup Required</h3>
+          <p>
+            The proxy needs a backend server to work. You can deploy one for free on Koyeb or Render.
+            <br><br>
+            Go to <a href="../settings.html">Settings</a> and enter your backend URL, or set one up following the instructions in the proxy-backend repository.
+            <br><br>
+            Once deployed, the proxy will register a Service Worker to intercept and route your traffic through the backend server.
+          </p>
+        </div>
+      </div>
+
+      <!-- Browse View -->
+      <div id="proxy-browse" class="proxy-frame-container">
+        <div class="proxy-toolbar">
+          <button onclick="goBack()" title="Back">&#8592;</button>
+          <button onclick="goForward()" title="Forward">&#8594;</button>
+          <button onclick="showSearch()" title="Home">&#127968;</button>
+          <input type="text" id="url-bar" placeholder="URL" onkeydown="if(event.key==='Enter')navigateBar()">
+          <button onclick="navigateBar()">Go</button>
+          <button onclick="document.getElementById('proxy-frame').requestFullscreen()" title="Fullscreen">&#9974;</button>
+        </div>
+        <iframe id="proxy-frame" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" allowfullscreen></iframe>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    const backendUrl = localStorage.getItem('proxyBackend') || '';
+    const statusEl = document.getElementById('proxy-status');
+    const noticeEl = document.getElementById('setup-notice');
+
+    // Check backend status
+    if (!backendUrl) {
+      statusEl.className = 'proxy-status disconnected';
+      statusEl.textContent = 'No backend configured';
+      noticeEl.style.display = '';
+    } else {
+      fetch(backendUrl, { mode: 'no-cors' })
+        .then(() => {
+          statusEl.className = 'proxy-status connected';
+          statusEl.textContent = 'Backend connected';
+          registerSW();
+        })
+        .catch(() => {
+          statusEl.className = 'proxy-status disconnected';
+          statusEl.textContent = 'Backend unreachable';
+          noticeEl.style.display = '';
+        });
+    }
+
+    async function registerSW() {
+      if ('serviceWorker' in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+          console.log('SW registered:', reg.scope);
+        } catch (e) {
+          console.warn('SW registration failed:', e);
+        }
+      }
+    }
+
+    function isUrl(str) {
+      return /^https?:\/\//i.test(str) || /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/.test(str);
+    }
+
+    function normalizeUrl(str) {
+      str = str.trim();
+      if (!/^https?:\/\//i.test(str)) {
+        if (isUrl(str)) str = 'https://' + str;
+        else str = 'https://www.google.com/search?q=' + encodeURIComponent(str);
+      }
+      return str;
+    }
+
+    function navigate() {
+      const input = document.getElementById('proxy-input').value;
+      if (!input.trim()) return;
+      go(normalizeUrl(input));
+    }
+
+    function go(url) {
+      if (backendUrl) {
+        // If we have a backend with Ultraviolet, encode the URL
+        const encoded = encodeURIComponent(url);
+        const proxyUrl = `${backendUrl}/proxy?url=${encoded}`;
+        showBrowse(proxyUrl, url);
+      } else {
+        // Fallback: try direct iframe (won't work for most sites due to X-Frame-Options)
+        showBrowse(url, url);
+      }
+    }
+
+    function showBrowse(src, displayUrl) {
+      document.getElementById('proxy-search').style.display = 'none';
+      document.getElementById('proxy-browse').style.display = '';
+      document.getElementById('proxy-frame').src = src;
+      document.getElementById('url-bar').value = displayUrl || src;
+    }
+
+    function showSearch() {
+      document.getElementById('proxy-browse').style.display = 'none';
+      document.getElementById('proxy-search').style.display = '';
+      document.getElementById('proxy-frame').src = '';
+    }
+
+    function navigateBar() {
+      const url = normalizeUrl(document.getElementById('url-bar').value);
+      go(url);
+    }
+
+    function goBack() { document.getElementById('proxy-frame').contentWindow.history.back(); }
+    function goForward() { document.getElementById('proxy-frame').contentWindow.history.forward(); }
+
+    // Enter key on main search
+    document.getElementById('proxy-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') navigate();
+    });
+  </script>
+</body>
+</html>

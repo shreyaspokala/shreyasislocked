@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Emulator</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .emulator-info {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .emulator-info p { color: var(--text-secondary); margin-top: 8px; }
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 40px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .file-upload:hover { border-color: var(--accent); }
+    .file-upload .icon { font-size: 3rem; }
+    .file-upload input { display: none; }
+    #emulator-container { display: none; width: 100%; max-width: 800px; margin: 0 auto; }
+    #game { width: 100%; aspect-ratio: 4/3; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+    <div class="overlay"></div>
+
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>ShreyasIsLocked</h1>
+        <div class="subtitle">Your gateway to freedom</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../../index.html"><span class="nav-icon">&#127968;</span> Home</a></li>
+        <li><a href="../../proxy/index.html"><span class="nav-icon">&#127760;</span> Proxy</a></li>
+        <li><a href="../index.html"><span class="nav-icon">&#127918;</span> Games</a></li>
+        <li><a href="index.html" class="active"><span class="nav-icon">&#128190;</span> Emulator</a></li>
+        <li><a href="../../settings.html"><span class="nav-icon">&#9881;</span> Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        Press <kbd>`</kbd> to panic
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="page-header">
+        <h2>Retro Emulator</h2>
+        <p>Play NES, SNES, GBA, N64, and more right in your browser.</p>
+      </div>
+
+      <div id="setup">
+        <div class="emulator-picker">
+          <select id="core-select">
+            <option value="nes">NES</option>
+            <option value="snes">SNES</option>
+            <option value="gba" selected>GBA</option>
+            <option value="gb">Game Boy</option>
+            <option value="n64">N64</option>
+            <option value="nds">Nintendo DS</option>
+            <option value="segaMD">Sega Genesis</option>
+            <option value="psx">PlayStation 1</option>
+          </select>
+        </div>
+
+        <label class="file-upload" id="drop-zone">
+          <span class="icon">&#128190;</span>
+          <strong>Click to upload a ROM</strong>
+          <p style="color:var(--text-secondary);font-size:0.85rem;">or drag and drop a ROM file here</p>
+          <p style="color:var(--text-secondary);font-size:0.75rem;">Supported: .nes, .smc, .sfc, .gba, .gb, .gbc, .n64, .z64, .nds, .bin, .md, .zip</p>
+          <input type="file" id="rom-input" accept=".nes,.smc,.sfc,.gba,.gb,.gbc,.n64,.z64,.nds,.bin,.md,.gen,.zip">
+        </label>
+
+        <div class="emulator-info">
+          <strong>How it works</strong>
+          <p>Select your console, upload a ROM file, and play! Your ROM files stay on your device and are never uploaded to any server. Powered by EmulatorJS.</p>
+        </div>
+      </div>
+
+      <div id="emulator-container">
+        <a href="#" class="back-btn" onclick="location.reload(); return false;">&#8592; Back to ROM selection</a>
+        <div id="game"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    const dropZone = document.getElementById('drop-zone');
+    const romInput = document.getElementById('rom-input');
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#e94560'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = ''; });
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.style.borderColor = '';
+      if (e.dataTransfer.files.length) loadROM(e.dataTransfer.files[0]);
+    });
+
+    romInput.addEventListener('change', () => {
+      if (romInput.files.length) loadROM(romInput.files[0]);
+    });
+
+    function loadROM(file) {
+      const core = document.getElementById('core-select').value;
+      const url = URL.createObjectURL(file);
+
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('emulator-container').style.display = 'block';
+
+      // EmulatorJS config
+      window.EJS_player = '#game';
+      window.EJS_core = core;
+      window.EJS_gameUrl = url;
+      window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+      document.body.appendChild(script);
+    }
+  </script>
+</body>
+</html>

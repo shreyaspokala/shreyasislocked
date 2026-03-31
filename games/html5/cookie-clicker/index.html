@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Clicker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f1a; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; min-height: 100vh; }
+    .back { position: absolute; top: 16px; left: 16px; padding: 10px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; text-decoration: none; font-size: 0.95rem; z-index: 10; }
+    .back:hover { background: #ff6b81; }
+    .left { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .right { width: 300px; background: #1a1a2e; padding: 20px; overflow-y: auto; border-left: 1px solid #2a2a4a; }
+    h1 { font-size: 1.5rem; margin-bottom: 4px; background: linear-gradient(135deg, #e94560, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    #count { font-size: 2.5rem; font-weight: 700; margin: 8px 0; }
+    #cps { color: #a0a0b8; margin-bottom: 20px; }
+    .cookie { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #d4a050, #a06020); border: none; cursor: pointer; font-size: 5rem; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+    .cookie:hover { transform: scale(1.05); }
+    .cookie:active { transform: scale(0.95); }
+    .right h2 { font-size: 1.1rem; margin-bottom: 16px; color: #a0a0b8; }
+    .upgrade { background: #16213e; border: 1px solid #2a2a4a; border-radius: 8px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+    .upgrade:hover { border-color: #e94560; background: #1a2744; }
+    .upgrade.locked { opacity: 0.4; cursor: not-allowed; }
+    .upgrade .name { font-weight: 600; margin-bottom: 4px; }
+    .upgrade .desc { font-size: 0.8rem; color: #a0a0b8; }
+    .upgrade .cost { color: #edc22e; font-weight: 600; margin-top: 4px; font-size: 0.85rem; }
+    .upgrade .owned { float: right; color: #a0a0b8; }
+    .float-text { position: fixed; pointer-events: none; color: #edc22e; font-weight: 700; font-size: 1.2rem; animation: floatUp 0.8s forwards; }
+    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-60px); } }
+    @media (max-width: 600px) { body { flex-direction: column; } .right { width: 100%; border-left: none; border-top: 1px solid #2a2a4a; } }
+  </style>
+</head>
+<body>
+  <a href="../../games/index.html" class="back">&#8592; Back</a>
+  <div class="left">
+    <h1>Cookie Clicker</h1>
+    <div id="count">0</div>
+    <div id="cps">0 cookies/sec</div>
+    <button class="cookie" id="cookie">&#127850;</button>
+  </div>
+  <div class="right">
+    <h2>Upgrades</h2>
+    <div id="upgrades"></div>
+  </div>
+  <script>
+    let cookies = 0, cps = 0, clickPower = 1;
+    const upgrades = [
+      { name: 'Cursor', desc: 'Auto-clicks once every 10 seconds', baseCost: 15, cps: 0.1, owned: 0 },
+      { name: 'Grandma', desc: 'A nice grandma to bake cookies', baseCost: 100, cps: 1, owned: 0 },
+      { name: 'Farm', desc: 'Grows cookie plants', baseCost: 1100, cps: 8, owned: 0 },
+      { name: 'Mine', desc: 'Mines cookie dough', baseCost: 12000, cps: 47, owned: 0 },
+      { name: 'Factory', desc: 'Mass produces cookies', baseCost: 130000, cps: 260, owned: 0 },
+      { name: 'Bank', desc: 'Generates cookies from interest', baseCost: 1400000, cps: 1400, owned: 0 },
+      { name: 'Double Click', desc: '+1 cookie per click', baseCost: 500, cps: 0, owned: 0, clickBonus: 1 },
+    ];
+
+    function getCost(u) { return Math.floor(u.baseCost * Math.pow(1.15, u.owned)); }
+
+    function formatNum(n) {
+      if (n >= 1e12) return (n/1e12).toFixed(1) + 'T';
+      if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+      if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+      if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+      return Math.floor(n).toString();
+    }
+
+    function render() {
+      document.getElementById('count').textContent = formatNum(cookies) + ' cookies';
+      document.getElementById('cps').textContent = cps.toFixed(1) + ' cookies/sec';
+      const el = document.getElementById('upgrades');
+      el.innerHTML = '';
+      upgrades.forEach((u, i) => {
+        const cost = getCost(u);
+        const div = document.createElement('div');
+        div.className = 'upgrade' + (cookies < cost ? ' locked' : '');
+        div.innerHTML = `<div class="name">${u.name} <span class="owned">x${u.owned}</span></div><div class="desc">${u.desc}</div><div class="cost">${formatNum(cost)} cookies</div>`;
+        div.addEventListener('click', () => buy(i));
+        el.appendChild(div);
+      });
+    }
+
+    function buy(i) {
+      const u = upgrades[i];
+      const cost = getCost(u);
+      if (cookies < cost) return;
+      cookies -= cost;
+      u.owned++;
+      if (u.clickBonus) clickPower += u.clickBonus;
+      else cps += u.cps;
+      render();
+    }
+
+    document.getElementById('cookie').addEventListener('click', (e) => {
+      cookies += clickPower;
+      // Float text
+      const ft = document.createElement('div');
+      ft.className = 'float-text';
+      ft.textContent = '+' + clickPower;
+      ft.style.left = e.clientX + 'px';
+      ft.style.top = e.clientY + 'px';
+      document.body.appendChild(ft);
+      setTimeout(() => ft.remove(), 800);
+      render();
+    });
+
+    setInterval(() => { cookies += cps / 10; render(); }, 100);
+    render();
+  </script>
+</body>
+</html>

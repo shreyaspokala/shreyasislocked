@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f1a; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #e94560, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    canvas { background: #1a1a2e; border-radius: 12px; display: block; margin-top: 10px; }
+    .info { margin-top: 12px; display: flex; gap: 20px; font-size: 1rem; }
+    .back { position: absolute; top: 16px; left: 16px; padding: 10px 20px; background: #e94560; border: none; border-radius: 8px; color: #fff; text-decoration: none; font-size: 0.95rem; }
+    .back:hover { background: #ff6b81; }
+    #msg { margin-top: 10px; color: #ff6b81; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <a href="../../games/index.html" class="back">&#8592; Back</a>
+  <h1>Snake</h1>
+  <canvas id="c" width="400" height="400"></canvas>
+  <div class="info"><span>Score: <strong id="score">0</strong></span><span>Use arrow keys or swipe</span></div>
+  <div id="msg"></div>
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const size = 20, cols = canvas.width / size, rows = canvas.height / size;
+    let snake, dir, food, score, gameOver, interval;
+
+    function init() {
+      snake = [{x: 10, y: 10}];
+      dir = {x: 1, y: 0};
+      score = 0;
+      gameOver = false;
+      document.getElementById('msg').textContent = '';
+      document.getElementById('score').textContent = '0';
+      placeFood();
+      if (interval) clearInterval(interval);
+      interval = setInterval(update, 120);
+    }
+
+    function placeFood() {
+      do { food = {x: Math.floor(Math.random() * cols), y: Math.floor(Math.random() * rows)}; }
+      while (snake.some(s => s.x === food.x && s.y === food.y));
+    }
+
+    function update() {
+      if (gameOver) return;
+      const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+      if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows || snake.some(s => s.x === head.x && s.y === head.y)) {
+        gameOver = true;
+        document.getElementById('msg').textContent = 'Game Over! Click or press any key to restart.';
+        return;
+      }
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) { score++; document.getElementById('score').textContent = score; placeFood(); }
+      else snake.pop();
+      draw();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Grid lines
+      ctx.strokeStyle = '#16213e';
+      for (let i = 0; i <= cols; i++) { ctx.beginPath(); ctx.moveTo(i * size, 0); ctx.lineTo(i * size, canvas.height); ctx.stroke(); }
+      for (let i = 0; i <= rows; i++) { ctx.beginPath(); ctx.moveTo(0, i * size); ctx.lineTo(canvas.width, i * size); ctx.stroke(); }
+      // Snake
+      snake.forEach((s, i) => {
+        ctx.fillStyle = i === 0 ? '#e94560' : '#ff6b81';
+        ctx.beginPath();
+        ctx.roundRect(s.x * size + 1, s.y * size + 1, size - 2, size - 2, 4);
+        ctx.fill();
+      });
+      // Food
+      ctx.fillStyle = '#edc22e';
+      ctx.beginPath();
+      ctx.arc(food.x * size + size / 2, food.y * size + size / 2, size / 2 - 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (gameOver) { init(); return; }
+      const map = { ArrowLeft: {x:-1,y:0}, ArrowRight: {x:1,y:0}, ArrowUp: {x:0,y:-1}, ArrowDown: {x:0,y:1} };
+      const d = map[e.key];
+      if (d && !(d.x === -dir.x && d.y === -dir.y)) { dir = d; e.preventDefault(); }
+    });
+
+    canvas.addEventListener('click', () => { if (gameOver) init(); });
+
+    let tx, ty;
+    canvas.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; });
+    canvas.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+      let d;
+      if (Math.abs(dx) > Math.abs(dy)) d = dx > 0 ? {x:1,y:0} : {x:-1,y:0};
+      else d = dy > 0 ? {x:0,y:1} : {x:0,y:-1};
+      if (!(d.x === -dir.x && d.y === -dir.y)) dir = d;
+    });
+
+    init();
+  </script>
+</body>
+</html>
