@@ -1,3 +1,5 @@
+import { basePath } from './paths';
+
 export function sidebar(active: string): string {
   const icons: Record<string, string> = {
     home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11.5L12 4l9 7.5"/><path d="M5 10.8V20h14v-9.2"/></svg>',
@@ -9,13 +11,13 @@ export function sidebar(active: string): string {
     settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 1 1-4 0v-.2a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 1 1 0-4h.2a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 1 1 4 0v.2a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6H20a2 2 0 1 1 0 4h-.2a1 1 0 0 0-.9.6z"/></svg>',
   };
   const links: [string, string, string, string][] = [
-    ['home', '/', icons.home, 'Home'],
-    ['proxy', '/proxy.html', icons.proxy, 'Proxy'],
-    ['games', '/games.html', icons.games, 'Games'],
-    ['apps', '/apps.html', icons.apps, 'Apps'],
-    ['emulator', '/emulator.html', icons.emulator, 'Emulator'],
-    ['history', '/history.html', icons.history, 'History'],
-    ['settings', '/settings.html', icons.settings, 'Settings'],
+    ['home', basePath(''), icons.home, 'Home'],
+    ['proxy', basePath('proxy.html'), icons.proxy, 'Proxy'],
+    ['games', basePath('games.html'), icons.games, 'Games'],
+    ['apps', basePath('apps.html'), icons.apps, 'Apps'],
+    ['emulator', basePath('emulator.html'), icons.emulator, 'Emulator'],
+    ['history', basePath('history.html'), icons.history, 'History'],
+    ['settings', basePath('settings.html'), icons.settings, 'Settings'],
   ];
   const items = links
     .map(([id, href, icon, label]) =>

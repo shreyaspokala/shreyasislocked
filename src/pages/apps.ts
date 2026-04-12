@@ -4,6 +4,7 @@ import { initShell } from '../lib/shell';
 import { rewrite } from '../lib/cdn';
 import { buildSearcher, type Searcher } from '../lib/search';
 import { staggerCards, wireCardHover } from '../lib/motion';
+import { basePath } from '../lib/paths';
 import type { App, Game } from '../types';
 
 mountSidebar('apps');
@@ -22,7 +23,7 @@ function render(items: App[]): void {
       const img = rewrite(a.image);
       const url = encodeURIComponent(a.url);
       const name = encodeURIComponent(a.name);
-      return `<a class="card" href="/play.html?url=${url}&name=${name}&proxy=1">${
+      return `<a class="card" href="${basePath(`play.html?url=${url}&name=${name}&proxy=1`)}">${
         img ? `<img class="card-img" loading="lazy" src="${img}" alt="" onerror="this.style.display='none'">` : '<span class="card-icon">\u{1F4F1}</span>'
       }<div class="card-title">${escapeHtml(a.name)}</div></a>`;
     })
@@ -43,7 +44,7 @@ input.addEventListener('input', () => {
 });
 
 (async () => {
-  const res = await fetch('/data/apps.json');
+  const res = await fetch(basePath('data/apps.json'));
   const data: App[] = await res.json();
   count.textContent = `${data.length} apps`;
   searcher = await buildSearcher(data as Game[]);

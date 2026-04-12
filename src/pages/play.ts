@@ -3,6 +3,7 @@ import { applyCloak } from '../lib/cloak';
 import { wirePanic, openInBlank } from '../lib/panic';
 import { registerUV, uvEncode } from '../lib/uv';
 import { logVisit } from '../lib/history';
+import { basePath } from '../lib/paths';
 import { animate } from 'motion';
 
 applyCloak();
@@ -42,7 +43,7 @@ document.title = `${name} - Play`;
 
 document.getElementById('back-btn')?.addEventListener('click', () => {
   if (history.length > 1) history.back();
-  else location.href = '/games.html';
+  else location.href = basePath('games.html');
 });
 document.getElementById('fs-btn')?.addEventListener('click', () => {
   document.getElementById('game-frame')?.requestFullscreen();

@@ -4,6 +4,7 @@ import { initShell } from '../lib/shell';
 import { rewrite } from '../lib/cdn';
 import { buildSearcher, type Searcher } from '../lib/search';
 import { staggerCards, wireCardHover } from '../lib/motion';
+import { basePath } from '../lib/paths';
 import type { Game } from '../types';
 
 mountSidebar('games');
@@ -25,7 +26,7 @@ function render(items: Game[]): void {
       const media = img
         ? `<img class="card-img" loading="lazy" src="${img}" alt="" onerror="this.style.display='none'">`
         : '<span class="card-icon">\u{1F3AE}</span>';
-      return `<a class="card" href="/play.html?url=${url}&name=${name}${proxy}">${media}<div class="card-title">${escapeHtml(g.name)}</div></a>`;
+      return `<a class="card" href="${basePath(`play.html?url=${url}&name=${name}${proxy}`)}">${media}<div class="card-title">${escapeHtml(g.name)}</div></a>`;
     })
     .join('');
   grid.innerHTML = html || '<p style="color:var(--text-secondary);padding:20px;">No matches.</p>';
@@ -48,7 +49,7 @@ input.addEventListener('input', () => {
 });
 
 (async () => {
-  const res = await fetch('/data/games.json');
+  const res = await fetch(basePath('data/games.json'));
   const data: Game[] = await res.json();
   count.textContent = `${data.length} games`;
   searcher = await buildSearcher(data);

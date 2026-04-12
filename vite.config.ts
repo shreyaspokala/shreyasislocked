@@ -3,6 +3,7 @@ import swc from 'unplugin-swc';
 import { resolve } from 'node:path';
 
 export default defineConfig({
+  base: '/shreyasislocked/',
   plugins: [swc.vite({ jsc: { target: 'es2022', parser: { syntax: 'typescript' } } })],
   build: {
     target: 'es2022',
