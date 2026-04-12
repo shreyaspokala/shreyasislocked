@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emulator</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="sidebar-slot"></div>
+    <main class="main">
+      <div class="page-header">
+        <h2>Retro Emulator</h2>
+        <p>NES, SNES, GBA, GB, Genesis. Load a ROM file.</p>
+      </div>
+      <div class="emu-wrap">
+        <div class="rom-pick">
+          <select id="core">
+            <option value="nes">NES</option>
+            <option value="snes">SNES</option>
+            <option value="gba">GBA</option>
+            <option value="gb">Game Boy</option>
+            <option value="segaMD">Genesis</option>
+            <option value="n64">N64</option>
+          </select>
+          <label class="btn" for="rom-file">Load ROM</label>
+          <input type="file" id="rom-file" accept=".nes,.smc,.sfc,.gba,.gb,.gbc,.md,.bin,.z64,.n64,.zip">
+          <button class="btn btn-outline" id="fs-btn">Fullscreen</button>
+        </div>
+        <div id="game"></div>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="/src/pages/emulator.ts"></script>
+</body>
+</html>

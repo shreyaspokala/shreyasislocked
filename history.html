@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="sidebar-slot"></div>
+    <main class="main narrow">
+      <div class="page-header">
+        <h2>Search History</h2>
+        <p>Password-encrypted. Stored only on this device.</p>
+      </div>
+      <div id="gate" class="gate" hidden>
+        <h3 id="gate-title">Unlock</h3>
+        <p id="gate-desc">Enter password.</p>
+        <div id="gate-err" class="err" hidden></div>
+        <input type="password" id="pw" placeholder="Password" autocomplete="current-password">
+        <input type="password" id="pw2" placeholder="Confirm password" autocomplete="new-password" hidden>
+        <div class="row">
+          <button class="btn" id="unlock-btn">Unlock</button>
+          <button class="btn btn-outline" id="reset-btn">Reset</button>
+        </div>
+      </div>
+      <div id="view" hidden>
+        <div class="toolbar">
+          <button class="btn btn-outline" id="lock-btn">Lock</button>
+          <button class="btn btn-outline" id="clear-btn">Clear history</button>
+        </div>
+        <div class="hist-list" id="hist-list"></div>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="/src/pages/history.ts"></script>
+</body>
+</html>

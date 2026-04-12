@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" class="play-page">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Play</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+<body>
+  <div class="play-wrap">
+    <div class="play-bar">
+      <button class="sec" id="back-btn">← Back</button>
+      <span class="title" id="game-title">Loading…</span>
+      <button class="sec" id="fs-btn">⛶ Fullscreen</button>
+      <button id="blank-btn">about:blank</button>
+    </div>
+    <iframe id="game-frame" allow="gamepad;fullscreen;autoplay;clipboard-write" allowfullscreen></iframe>
+  </div>
+  <script type="module" src="/src/pages/play.ts"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+/home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/deps/serde-53d3d423ad77fdd1.d: /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/build/serde-1cc145a57a408b8c/out/private.rs
+
+/home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/deps/libserde-53d3d423ad77fdd1.rlib: /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/build/serde-1cc145a57a408b8c/out/private.rs
+
+/home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/deps/libserde-53d3d423ad77fdd1.rmeta: /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/build/serde-1cc145a57a408b8c/out/private.rs
+
+/home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/pranav/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/build/serde-1cc145a57a408b8c/out/private.rs:
+
+# env-dep:OUT_DIR=/home/pranav/docs/proj/shreyasislocked/target/wasm32-unknown-unknown/release/build/serde-1cc145a57a408b8c/out

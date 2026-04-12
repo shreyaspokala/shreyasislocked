@@ -1,0 +1,7 @@
+node_modules
+dist
+bun.lockb
+rust-search/target
+src/lib/wasm
+.DS_Store
+.env

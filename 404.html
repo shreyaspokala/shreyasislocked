@@ -3,16 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 - Not Found</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Not Found</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
 </head>
 <body>
-  <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;">
-    <div>
-      <h1 style="font-size:4rem;margin-bottom:16px;background:linear-gradient(135deg,#e94560,#ff6b81);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">404</h1>
-      <p style="color:#a0a0b8;font-size:1.2rem;margin-bottom:24px;">Page not found</p>
-      <a href="index.html" class="btn">Go Home</a>
-    </div>
+  <div class="app">
+    <div id="sidebar-slot"></div>
+    <main class="main">
+      <div class="notfound-wrap">
+        <h2>404</h2>
+        <p>Page not found.</p>
+        <a href="/" class="btn">Go home</a>
+      </div>
+    </main>
   </div>
+  <script type="module" src="/src/pages/notfound.ts"></script>
 </body>
 </html>

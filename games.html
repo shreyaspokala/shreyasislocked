@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="sidebar-slot"></div>
+    <main class="main">
+      <div class="page-header">
+        <div class="header-row">
+          <h2>Games <span class="count-badge" id="game-count">…</span></h2>
+        </div>
+        <p>Search the full library and jump straight into local, web, or retro sessions.</p>
+      </div>
+      <div class="tabs-container">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="all">All</button>
+          <button class="tab-btn" data-tab="html5">HTML5 (Local)</button>
+          <button class="tab-btn" data-tab="io">.io</button>
+          <button class="tab-btn" data-tab="retro">Retro</button>
+        </div>
+        <div id="tab-all" class="tab-content active">
+          <div class="search-box">
+            <input id="game-search" type="text" placeholder="Search games (fuzzy, Rust WASM)…" autocomplete="off" autofocus>
+          </div>
+          <div class="card-grid" id="game-grid"></div>
+        </div>
+        <div id="tab-html5" class="tab-content">
+          <div class="card-grid">
+            <a href="/games/html5/2048/index.html" class="card"><div class="card-title">2048</div></a>
+            <a href="/games/html5/snake/index.html" class="card"><div class="card-title">Snake</div></a>
+            <a href="/games/html5/tetris/index.html" class="card"><div class="card-title">Tetris</div></a>
+            <a href="/games/html5/flappy-bird/index.html" class="card"><div class="card-title">Flappy Bird</div></a>
+            <a href="/games/html5/pacman/index.html" class="card"><div class="card-title">Pac-Man</div></a>
+            <a href="/games/html5/minesweeper/index.html" class="card"><div class="card-title">Minesweeper</div></a>
+            <a href="/games/html5/cookie-clicker/index.html" class="card"><div class="card-title">Cookie Clicker</div></a>
+          </div>
+        </div>
+        <div id="tab-io" class="tab-content">
+          <div class="card-grid">
+            <a href="/games/io/index.html?game=slither" class="card"><div class="card-title">Slither.io</div></a>
+            <a href="/games/io/index.html?game=agar" class="card"><div class="card-title">Agar.io</div></a>
+            <a href="/games/io/index.html?game=krunker" class="card"><div class="card-title">Krunker.io</div></a>
+            <a href="/games/io/index.html?game=diep" class="card"><div class="card-title">Diep.io</div></a>
+            <a href="/games/io/index.html?game=1v1lol" class="card"><div class="card-title">1v1.LOL</div></a>
+            <a href="/games/io/index.html?game=shellshock" class="card"><div class="card-title">Shell Shockers</div></a>
+          </div>
+        </div>
+        <div id="tab-retro" class="tab-content">
+          <div class="panel center">
+            <span class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5"/>
+              </svg>
+            </span>
+            <h3 class="retro-title">Retro Game Emulator</h3>
+            <p class="card-desc retro-desc">NES, SNES, and GBA right in-browser. Bring your own ROM files.</p>
+            <a href="/emulator.html" class="btn">Open Emulator</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="/src/pages/games.ts"></script>
+</body>
+</html>

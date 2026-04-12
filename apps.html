@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apps</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="sidebar-slot"></div>
+    <main class="main">
+      <div class="page-header">
+        <div class="header-row">
+          <h2>Apps <span class="count-badge" id="app-count">…</span></h2>
+        </div>
+        <p>Streaming, social, and utility launchers. External targets open in play mode with proxy support.</p>
+      </div>
+      <div class="search-box">
+        <input id="app-search" type="text" placeholder="Search apps…" autocomplete="off" autofocus>
+      </div>
+      <div class="card-grid" id="app-grid"></div>
+    </main>
+  </div>
+  <script type="module" src="/src/pages/apps.ts"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy</title>
+  <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="sidebar-slot"></div>
+    <main class="main">
+      <div id="proxy-search">
+        <div class="proxy-hero">
+          <span class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>
+            </svg>
+          </span>
+          <h2>Web Proxy</h2>
+          <p>Browse any site freely with quick-launch targets and smooth handoff.</p>
+          <span class="status-pill" id="proxy-status">Checking…</span>
+        </div>
+        <div class="proxy-container">
+          <div class="search-box">
+            <input type="text" id="proxy-input" placeholder="URL or search…" autocomplete="off" autofocus>
+            <button id="go-btn">Go</button>
+          </div>
+          <div class="center mt-24">
+            <h3 class="card-desc">Quick Access</h3>
+            <div class="quick-links" id="quick-links"></div>
+          </div>
+        </div>
+        <div class="setup-notice" id="setup-notice" hidden>
+          <h3>Backend Setup Required</h3>
+          <p class="card-desc">Deploy your proxy backend on Koyeb/Render, then set its URL in <a href="/settings.html">Settings</a>.</p>
+        </div>
+      </div>
+      <div id="proxy-browse" class="proxy-frame-container">
+        <div class="proxy-toolbar">
+          <button id="pb-back" aria-label="Back">←</button>
+          <button id="pb-fwd" aria-label="Forward">→</button>
+          <button id="pb-home" aria-label="Home">⌂</button>
+          <input type="text" id="url-bar" placeholder="URL">
+          <button id="pb-go">Go</button>
+          <button id="pb-fs" aria-label="Fullscreen">⛶</button>
+        </div>
+        <iframe id="proxy-frame" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" allowfullscreen></iframe>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="/src/pages/proxy.ts"></script>
+</body>
+</html>
